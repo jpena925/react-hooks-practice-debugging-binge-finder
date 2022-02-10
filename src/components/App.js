@@ -8,7 +8,7 @@ import SelectedShowContainer from "./SelectedShowContainer";
 function App() {
   const [shows, setShows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedShow, setSelectedShow] = useState("");
+  const [selectedShow, setSelectedShow] = useState(null);
   const [episodes, setEpisodes] = useState([]);
   const [filterByRating, setFilterByRating] = useState("");
 
@@ -19,6 +19,9 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   });
+
+  console.log(window.height)
+
 
   function handleSearch(e) {
     setSearchTerm(e.target.value.toLowerCase());
@@ -31,19 +34,19 @@ function App() {
   }
 
   function selectShow(show) {
-    Adapter.getShowEpisodes(show.id).then((episodes) => {
-      setSelectedShow(show);
-      setEpisodes(episodes);
+    Adapter.getShowEpisodes(show.id).then((data) => {
+      setSelectedShow(show)
+      setEpisodes(data)
     });
   }
 
   let displayShows = shows;
   if (filterByRating) {
     displayShows = displayShows.filter((s) => {
-      s.rating.average >= filterByRating;
+      return s.rating.average >= filterByRating;
     });
   }
-
+ 
   return (
     <div>
       <Nav
@@ -56,7 +59,7 @@ function App() {
           {!!selectedShow ? (
             <SelectedShowContainer
               selectedShow={selectedShow}
-              allEpisodes={episodes}
+              episodes={episodes}
             />
           ) : (
             <div />
@@ -71,6 +74,7 @@ function App() {
         </Grid.Column>
       </Grid>
     </div>
+    
   );
 }
 
